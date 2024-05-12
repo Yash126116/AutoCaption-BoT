@@ -63,22 +63,25 @@ def about_callback(bot, update):
 
 @AutoCaptionBot.on_message(pyrogram.filters.channel)
 def edit_caption(bot, update: pyrogram.types.Message):
-    if os.environ.get("custom_caption"):
-        motech, _ = get_file_details(update)
-        try:
-            original_caption = custom_caption.format(file_name=motech.file_name)
-            modified_caption = remove_renamer(original_caption)
-            print("Original caption:", original_caption)
-            print("Modified caption:", modified_caption)
-            try:
-                update.edit(modified_caption)
-            except pyrogram.errors.FloodWait as FloodWait:
-                asyncio.sleep(FloodWait.value)
-                update.edit(modified_caption)
-        except pyrogram.errors.MessageNotModified:
-            pass
-    else:
-        return
+    try:
+        # Get the original caption
+        original_caption = update.caption or ""
+        
+        # Remove the '🧞 Renamer' text
+        modified_caption = original_caption.replace('🧞 Renamer', '')
+        
+        # Print original and modified captions for debugging
+        print("Original caption:", original_caption)
+        print("Modified caption:", modified_caption)
+        
+        # Edit the message caption with the modified caption
+        bot.edit_message_caption(
+            chat_id=update.chat.id,
+            message_id=update.message_id,
+            caption=modified_caption,
+        )
+    except Exception as e:
+        print("Error editing caption:", e)
 
 def get_file_details(update: pyrogram.types.Message):
     if update.media:
