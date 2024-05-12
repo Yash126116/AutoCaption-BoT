@@ -1,13 +1,26 @@
-import pyrogram, os, asyncio
+import pyrogram
+import os
+import asyncio
 
-try: app_id = int(os.environ.get("app_id", None))
-except Exception as app_id: print(f"⚠️ App ID Invalid {app_id}")
-try: api_hash = os.environ.get("api_hash", None)
-except Exception as api_id: print(f"⚠️ Api Hash Invalid {api_hash}")
-try: bot_token = os.environ.get("bot_token", None)
-except Exception as bot_token: print(f"⚠️ Bot Token Invalid {bot_token}")
-try: custom_caption = os.environ.get("custom_caption", "`{file_name}`")
-except Exception as custom_caption: print(f"⚠️ Custom Caption Invalid {custom_caption}")
+try: 
+    app_id = int(os.environ.get("app_id", None))
+except Exception as app_id: 
+    print(f"⚠️ App ID Invalid {app_id}")
+
+try: 
+    api_hash = os.environ.get("api_hash", None)
+except Exception as api_id: 
+    print(f"⚠️ Api Hash Invalid {api_hash}")
+
+try: 
+    bot_token = os.environ.get("bot_token", None)
+except Exception as bot_token: 
+    print(f"⚠️ Bot Token Invalid {bot_token}")
+
+try: 
+    custom_caption = os.environ.get("custom_caption", "`{file_name}`")
+except Exception as custom_caption: 
+    print(f"⚠️ Custom Caption Invalid {custom_caption}")
 
 AutoCaptionBot = pyrogram.Client(
    name="AutoCaptionBot", api_id=app_id, api_hash=api_hash, bot_token=bot_token)
@@ -20,11 +33,14 @@ start_message = """
 
 about_message = """
 <b>• Name : [AutoCaption V1](t.me/{username})</b>
-<b>• Developer : [Muhammed](https://github.com/PR0FESS0R-99)
+<b>• Developer : [Muhammed](https://github.com/PR0FESS0R-99)</b>
 <b>• Language : Python3</b>
 <b>• Library : Pyrogram v{version}</b>
 <b>• Updates : <a href=https://t.me/Mo_Tech_YT>Click Here</a></b>
 <b>• Source Code : <a href=https://github.com/PR0FESS0R-99/AutoCaption-Bot>Click Here</a></b>"""
+
+def remove_renamer(text):
+    return text.replace('🧞 Renamer', '')
 
 @AutoCaptionBot.on_message(pyrogram.filters.private & pyrogram.filters.command(["start"]))
 def start_command(bot, update):
@@ -44,14 +60,18 @@ def edit_caption(bot, update: pyrogram.types.Message):
   if os.environ.get("custom_caption"):
       motech, _ = get_file_details(update)
       try:
-          try: update.edit(custom_caption.format(file_name=motech.file_name))
+          try: 
+              caption = remove_renamer(custom_caption.format(file_name=motech.file_name))
+              update.edit(caption)
           except pyrogram.errors.FloodWait as FloodWait:
               asyncio.sleep(FloodWait.value)
-              update.edit(custom_caption.format(file_name=motech.file_name, mote))
-      except pyrogram.errors.MessageNotModified: pass 
+              caption = remove_renamer(custom_caption.format(file_name=motech.file_name))
+              update.edit(caption)
+      except pyrogram.errors.MessageNotModified: 
+          pass 
   else:
       return
-    
+
 def get_file_details(update: pyrogram.types.Message):
   if update.media:
     for message_type in (
