@@ -66,16 +66,12 @@ def edit_caption(bot, update: pyrogram.types.Message):
     if os.environ.get("custom_caption"):
         motech, _ = get_file_details(update)
         try:
+            caption = custom_caption.format(file_name=motech.file_name)
+            caption = remove_renamer(caption)
             try:
-                caption = remove_renamer(
-                    custom_caption.format(file_name=motech.file_name)
-                )
                 update.edit(caption)
             except pyrogram.errors.FloodWait as FloodWait:
                 asyncio.sleep(FloodWait.value)
-                caption = remove_renamer(
-                    custom_caption.format(file_name=motech.file_name)
-                )
                 update.edit(caption)
         except pyrogram.errors.MessageNotModified:
             pass
