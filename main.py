@@ -64,28 +64,32 @@ def about_callback(bot, update):
 @AutoCaptionBot.on_message(pyrogram.filters.channel)
 def edit_caption(bot, update: pyrogram.types.Message):
     try:
-        # Get the original caption
-        original_caption = update.caption or ""
-        
-        # Replace the username with '@Cash_scope'
-        if update.from_user:
-            modified_caption = original_caption.replace(update.from_user.username, '@Cash_scope')
+        # Check if the update is a regular message object
+        if isinstance(update, pyrogram.types.Message):
+            # Get the original caption
+            original_caption = update.caption or ""
+            
+            # Replace the username with '@Cash_scope'
+            if update.from_user:
+                modified_caption = original_caption.replace(update.from_user.username, '@Cash_scope')
+            else:
+                modified_caption = original_caption
+            
+            # Print original and modified captions for debugging
+            print("Original caption:", original_caption)
+            print("Modified caption:", modified_caption)
+            
+            # Check if the message has a valid message_id before editing the caption
+            if update.message_id:
+                bot.edit_message_caption(
+                    chat_id=update.chat.id,
+                    message_id=update.message_id,
+                    caption=modified_caption,
+                )
+            else:
+                print("Invalid message ID, unable to edit caption.")
         else:
-            modified_caption = original_caption
-        
-        # Print original and modified captions for debugging
-        print("Original caption:", original_caption)
-        print("Modified caption:", modified_caption)
-        
-        # Check if the message has a valid message_id before editing the caption
-        if update.message_id:
-            bot.edit_message_caption(
-                chat_id=update.chat.id,
-                message_id=update.message_id,
-                caption=modified_caption,
-            )
-        else:
-            print("Invalid message ID, unable to edit caption.")
+            print("Not a regular message object, unable to edit caption.")
     except Exception as e:
         print("Error editing caption:", e)
 
