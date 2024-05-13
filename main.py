@@ -68,7 +68,10 @@ def edit_caption(bot, update: pyrogram.types.Message):
         original_caption = update.caption or ""
         
         # Replace the username with '@Cash_scope'
-        modified_caption = original_caption.replace(update.from_user.username, '@Cash_scope')
+        if update.from_user:
+            modified_caption = original_caption.replace(update.from_user.username, '@Cash_scope')
+        else:
+            modified_caption = original_caption
         
         # Print original and modified captions for debugging
         print("Original caption:", original_caption)
