@@ -81,10 +81,12 @@ def edit_caption(bot, update: pyrogram.types.Message):
             
             # Check if the message has a valid message_id before editing the caption
             if update.message_id:
-                bot.edit_message_caption(
+                bot.edit_message_text(
                     chat_id=update.chat.id,
                     message_id=update.message_id,
+                    text=update.text,  # Preserve the original text
                     caption=modified_caption,
+                    parse_mode="HTML",
                 )
             else:
                 print("Invalid message ID, unable to edit caption.")
